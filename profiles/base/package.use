@@ -1,0 +1,7 @@
+app-shells/zsh
+app-shells/zsh-completions
+app-editors/neovim
+app-emulation/qemu
+app-misc/tmux
+net-misc/bridge-utils
+dev-vcs/git
