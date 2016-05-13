@@ -1,7 +1,8 @@
 app-shells/zsh
 app-shells/zsh-completions
 app-editors/neovim
-app-emulation/qemu
+app-emulation/qemu qemu_softmmu_targets_x86_64
 app-misc/tmux
 net-misc/bridge-utils
 dev-vcs/git
+media-libs/mesa egl gles2 shared-glapi
