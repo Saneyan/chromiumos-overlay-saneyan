@@ -14,13 +14,59 @@ git clone https://github.com/Saneyan/chromiumos-overlay-saneyan.git overlay-sane
 mv overlay-saneyan ~/chromiumos/src/overlays
 ```
 
+Create and check out a new branch in each of portage-stable and chromiumos-overlay repository.
+
+```
+cd ~/trunk/src/third_party/portage-stable
+repo start saneyan/master .
+cd ../chromiumos-overlay
+repo start saneyan/master .
+```
+
+#### Edit .eclass
+
 Add `saneyan` to $ALL\_BOARDS list in `~/chromiumos/src/third_party/chromiumos-overlay/eclass/cros-board.eclass` so that cros can setup and bulid an image for the board.
 
-(Related to udev bug) You should fix mtools to avoid mcopy's flock failure for build\_image.
+You can add new packages to add package names to $CROS_RDEPEND list, such as:
+
+```
+cat >> ./virtual/target-chromium-os/target-chromium-os-1.ebuild << EOL
+IUSE="${IUSE} kvm neovim"
+
+CROS_RDEPEND="${CROS_RDEPEND}
+  app-shells/zsh
+  app-shells/zsh-completions
+  app-misc/tmux
+  dev-vcs/git
+  kvm? (
+    app-emulation/qemu
+    net-misc/bridge-utils
+  )
+  neovim? ( app-editors/neovim )
+"
+EOL
+```
+
+#### Licensing
+
+The `app-shells/zsh-completions` uses BSD license but not BSD-Google.
+
+```
+cp -r ../overlays/overlay-saneyan/licenses/copyright-attribution/app-shells ./licenses/copyright-attribution
+```
+
+#### Fix crosutils (udev)
+
+You should fix mtools to avoid mcopy's flock failure for build\_image.
 
 ```
 repo download --cherry-pick chromiumos/platform/crosutils 303962/1
 ```
+
+#### USE flag
+
+ * `kvm`: Enable KVM and install qemu package (containing qemu-system-x86_64 command, disabling USB passthrough)
+ * `neovim`: Install Neovim that's a refator in the tradition of Vim (accepting ~amd64 keyword)
 
 ## Build
 
@@ -40,13 +86,13 @@ This command needs to run once.
 You need to build packages before building an image.
 
 ```
-./build_packages --board=saneyan
+./build_packages --board=saneyan --withdev --nowithtest --nowithautotest --nowithdebug 
 ```
 
 After that, let's build an image and copy onto a USB drive.
 
 ```
-./build_image --board=saneyan dev --boot_args="noinitrd lsm.module_locking=0 disablevmx=off"
+./build_image --board=saneyan --boot_args="noinitrd lsm.module_locking=0 disablevmx=off" dev
 cros flash usb:///dev/sdx saneyan/latest
 ```
 
