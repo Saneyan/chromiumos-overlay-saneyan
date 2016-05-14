@@ -1,13 +1,13 @@
 # chromiumos-overlay-saneyan
 
-The Chromium OS overlay for saneyan dev environment.
+The Chromium OS overlay for saneyan dev environment.<br>
 This overlay bundles dev packages and enables KVM for Chromium OS.
 
 ## Installation
 
 **Before installing this overlay, you must prepare to build Chromium OS and get the source code.**
 
-Place this overlay into `~/chromiumos/src/overlays`. Then, the dir name must be `overlay-saneyan`.
+Place the overlay into `~/chromiumos/src/overlays`. Then, the dir name must be `overlay-saneyan`.
 
 ```
 git clone https://github.com/Saneyan/chromiumos-overlay-saneyan.git overlay-saneyan
@@ -27,7 +27,7 @@ repo start saneyan/master .
 
 Add `saneyan` to $ALL\_BOARDS list in `~/chromiumos/src/third_party/chromiumos-overlay/eclass/cros-board.eclass` so that cros can setup and bulid an image for the board.
 
-You can add new packages to add package names to $CROS_RDEPEND list, such as:
+You can install additional packages to add package names to $CROS_RDEPEND list, such as:
 
 ```
 cat >> ./virtual/target-chromium-os/target-chromium-os-1.ebuild << EOL
@@ -65,11 +65,10 @@ repo download --cherry-pick chromiumos/platform/crosutils 303962/1
 
 #### USE flag
 
- * `kvm`: Enable KVM and install qemu package (containing qemu-system-x86_64 command, disabling USB passthrough)
- * `neovim`: Install Neovim that's a refator in the tradition of Vim (accepting ~amd64 keyword)
+ * `kvm`: Enable KVM and install qemu package (containing qemu-system-x86_64 command, disabling USB passthrough).
+ * `neovim`: Install Neovim that's a refactor in the tradition of Vim (accepting ~amd64 keyword). Do not forget Portage must support EAPI 6, or the LPeg which Neovim depends is never installed.
 
 ## Build
-
 
 Enter chroot with cros\_sdk.
 
