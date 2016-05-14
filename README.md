@@ -16,7 +16,20 @@ mv overlay-saneyan ~/chromiumos/src/overlays
 
 Add `saneyan` to $ALL\_BOARDS list in `~/chromiumos/src/third_party/chromiumos-overlay/eclass/cros-board.eclass` so that cros can setup and bulid an image for the board.
 
+(Related to udev bug) You should fix mtools to avoid mcopy's flock failure for build\_image.
+
+```
+repo download --cherry-pick chromiumos/platform/crosutils 303962/1
+```
+
 ## Build
+
+
+Enter chroot with cros\_sdk.
+
+```
+cros_sdk
+```
 
 This command needs to run once.
 
@@ -33,7 +46,7 @@ You need to build packages before building an image.
 After that, let's build an image and copy onto a USB drive.
 
 ```
-./build_image dev --boot_args="noinitrd lsm.module_locking=0 disablevmx=off"
+./build_image --board=saneyan dev --boot_args="noinitrd lsm.module_locking=0 disablevmx=off"
 cros flash usb:///dev/sdx saneyan/latest
 ```
 
