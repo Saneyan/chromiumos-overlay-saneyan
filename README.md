@@ -112,15 +112,14 @@ Get the wrapper shell script and the disk image.
 
 ```
 sudo mkdir -p /usr/local/q/coreos
+chown chronos:chronos /usr/local/q/coreos
 cd /usr/local/q/coreos
-COREOS_URL="https://stable.release.core-os.net/amd64-usr/current/"
+COREOS_URL="https://stable.release.core-os.net/amd64-usr/current"
 COREOS_DIST="coreos_production_qemu"
 wget $COREOS_URL/$COREOS_DIST.sh
 wget $COREOS_URL/$COREOS_DIST.sh.sig
 wget $COREOS_URL/${COREOS_DIST}_image.img.bz2
 wget $COREOS_URL/${COREOS_DIST}_image.img.bz2.sig
-gpg --verify $COREOS_DIST.sh.sig
-gpg --verify ${COREOS_DIST}_image.img.bz2.sig
 bzip2 -d ${COREOS_DIST}_image.img.bz2
 chmod +x $COREOS_DIST.sh
 ```
