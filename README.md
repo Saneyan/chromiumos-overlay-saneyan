@@ -91,7 +91,7 @@ You need to build packages before building an image.
 After that, let's build an image and copy onto a USB drive.
 
 ```
-./build_image --board=saneyan --boot_args="noinitrd lsm.module_locking=0 disablevmx=off" dev
+./build_image --board=saneyan --noenable_rootfs_verification --boot_args="noinitrd lsm.module_locking=0 disablevmx=off" dev
 cros flash usb:///dev/sdx saneyan/latest
 ```
 
