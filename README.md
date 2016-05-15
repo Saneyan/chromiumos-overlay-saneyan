@@ -17,42 +17,44 @@ mv overlay-saneyan ~/chromiumos/src/overlays
 Create and check out a new branch in each of portage-stable and chromiumos-overlay repository.
 
 ```
-cd ~/trunk/src/third_party/portage-stable
+cd ~/chromiumos/src/third_party/portage-stable
 repo start saneyan/master .
 cd ../chromiumos-overlay
 repo start saneyan/master .
 ```
 
-#### Edit .eclass
+#### Edit eclass and ebuild
 
 Add `saneyan` to $ALL\_BOARDS list in `~/chromiumos/src/third_party/chromiumos-overlay/eclass/cros-board.eclass` so that cros can setup and bulid an image for the board.
 
-You can install additional packages to add package names to $CROS_RDEPEND list, such as:
+Add the following package names to $CROS\_COMMON\_RDEPEND list in `~/chromiumos/src/third_party/chromiumos-overlay/virtual/target-chromium-os/target-chromium-os-1.ebuild` to install additional packages.<br>
 
 ```
-cat >> ./virtual/target-chromium-os/target-chromium-os-1.ebuild << EOL
+app-shells/zsh
+app-shells/zsh-completions
+app-misc/tmux
+dev-vcs/git
+kvm? (
+  app-emulation/qemu
+  net-misc/bridge-utils
+)
+neovim? ( app-editors/neovim )
+```
+
+Do not forget add use flags to IUSE variable.
+
+```
 IUSE="${IUSE} kvm neovim"
-
-CROS_RDEPEND="${CROS_RDEPEND}
-  app-shells/zsh
-  app-shells/zsh-completions
-  app-misc/tmux
-  dev-vcs/git
-  kvm? (
-    app-emulation/qemu
-    net-misc/bridge-utils
-  )
-  neovim? ( app-editors/neovim )
-"
-EOL
 ```
+
+**Make sure the revision number of the ebuild has been incremented.**
 
 #### Licensing
 
-The `app-shells/zsh-completions` uses BSD license but not BSD-Google.
+The `app-shells/zsh-completions` uses BSD license but not BSD-Google. So you must copy the copyright attribution to `~/chromiumos/src/third_party/chromiumos-overlay/licences/copyright-attribution` from the overlay.
 
 ```
-cp -r ../overlays/overlay-saneyan/licenses/copyright-attribution/app-shells ./licenses/copyright-attribution
+cp -r ../../overlays/overlay-saneyan/licenses/copyright-attribution/app-shells ./licenses/copyright-attribution
 ```
 
 #### Fix crosutils (udev)
@@ -65,7 +67,7 @@ repo download --cherry-pick chromiumos/platform/crosutils 303962/1
 
 #### USE flag
 
- * `kvm`: Enable KVM and install qemu package (containing qemu-system-x86_64 command, disabling USB passthrough).
+ * `kvm`: Enable KVM and install qemu package (containing qemu-system-x86\_64 command, disabling USB passthrough).
  * `neovim`: Install Neovim that's a refactor in the tradition of Vim (accepting ~amd64 keyword). Do not forget Portage must support EAPI 6, or the LPeg which Neovim depends is never installed.
 
 ## Build
