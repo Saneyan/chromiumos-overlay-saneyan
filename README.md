@@ -3,6 +3,8 @@
 The Chromium OS overlay for saneyan dev environment.<br>
 This overlay bundles dev packages and enables KVM for Chromium OS.
 
+![chromiumos](/chromiumos.png)
+
 ## Installation
 
 **Before installing this overlay, you must prepare to build Chromium OS and get the source code.**
