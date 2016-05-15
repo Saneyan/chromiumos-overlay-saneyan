@@ -106,7 +106,7 @@ sudo modprobe kvm_intel
 lsmod | grep kvm_intel # You will see it.
 ```
 
-### Prepare Virtual Machine (CoreOS)
+#### Prepare Virtual Machine (CoreOS)
 
 Get the wrapper shell script and the disk image.
 
@@ -130,4 +130,16 @@ Run the virtual machine and connect via SSH.
 ```
 ./coreos_production_qemu.sh -a ~/.ssh/authorized_keys -- -nographic
 ssh -l -p 2222 localhost
+```
+
+#### Remapping Keys
+
+Open chrome://settings-frame/keyboard-overlay and run this snippet to remap CapsLock key to Ctrl key.
+
+```js
+{
+  let clrs = document.querySelector('#caps-lock-remapping-section');
+  clrs.hidden = false;
+  clrs.querySelector('select').value = 1;
+}
 ```
