@@ -112,7 +112,7 @@ Get the wrapper shell script and the disk image.
 
 ```
 sudo mkdir -p /usr/local/q/coreos
-chown chronos:chronos /usr/local/q/coreos
+sudo chown chronos:chronos /usr/local/q/coreos
 cd /usr/local/q/coreos
 COREOS_URL="https://stable.release.core-os.net/amd64-usr/current"
 COREOS_DIST="coreos_production_qemu"
