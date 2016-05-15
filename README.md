@@ -106,30 +106,20 @@ sudo modprobe kvm_intel
 lsmod | grep kvm_intel # You will see it.
 ```
 
-#### Prepare Virtual Machine (CoreOS)
+#### Prepare Virtual Machine (Alpine)
 
-Get the wrapper shell script and the disk image.
-
-```
-sudo mkdir -p /usr/local/q/coreos
-sudo chown chronos:chronos /usr/local/q/coreos
-cd /usr/local/q/coreos
-COREOS_URL="https://stable.release.core-os.net/amd64-usr/current"
-COREOS_DIST="coreos_production_qemu"
-wget $COREOS_URL/$COREOS_DIST.sh
-wget $COREOS_URL/$COREOS_DIST.sh.sig
-wget $COREOS_URL/${COREOS_DIST}_image.img.bz2
-wget $COREOS_URL/${COREOS_DIST}_image.img.bz2.sig
-bzip2 -d ${COREOS_DIST}_image.img.bz2
-chmod +x $COREOS_DIST.sh
-```
-
-Run the virtual machine and connect via SSH.
+Download Alpine Linux ISO and setup disk image and virtual machine. Note that Alpine Linux should be built with vanilla kernel so that Docker can store new images.
 
 ```
-./coreos_production_qemu.sh -a ~/.ssh/authorized_keys -- -nographic
-ssh -l -p 2222 localhost
+sudo mkdir -p /usr/local/q/alpine
+sudo chown chronos:chronos /usr/local/q/alpine
+cd /usr/local/q/alpine
+wget http://wiki.alpinelinux.org/cgi-bin/dl.cgi/v3.3/releases/x86_64/alpine-vanilla-3.3.3-x86_64.iso
+qemu-img create -f qcow2 alpine.img 20G
+qemu-system-x86_64 -daemonize -enable-kvm -m 2048M -drive index=0,media=disk,if=virtio,file=alpine.img -netdev type=user,id=alpnet -device virtio-net-pci,netdev=alpnet -m 2048M -localtime
 ```
+
+You can connect to the virtual machine with VNC Viewer for Google Chrome or SSH.
 
 #### Remapping Keys
 
