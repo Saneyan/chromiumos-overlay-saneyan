@@ -134,12 +134,8 @@ ssh -l -p 2222 localhost
 
 #### Remapping Keys
 
-Open chrome://settings-frame/keyboard-overlay and run this snippet to remap CapsLock key to Ctrl key.
+Open chrome://settings-frame/keyboard-overlay and run this snippet to enable to remap CapsLock key to another key.
 
 ```js
-{
-  let clrs = document.querySelector('#caps-lock-remapping-section');
-  clrs.hidden = false;
-  clrs.querySelector('select').value = 1;
-}
+document.querySelector('#caps-lock-remapping-section').hidden = false;
 ```
