@@ -87,7 +87,7 @@ This command needs to run once.
 You need to build packages before building an image.
 
 ```
-./build_packages --board=saneyan --withdev --nowithtest --nowithautotest --nowithdebug 
+./build_packages --board=saneyan
 ```
 
 After that, let's build an image and copy onto a USB drive.
