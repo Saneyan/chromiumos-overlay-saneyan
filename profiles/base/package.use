@@ -1,2 +1,4 @@
+#sys-libs/ncurses tinfo unicode
+#app-shells/zsh pcre
 app-emulation/qemu qemu_softmmu_targets_x86_64 -usb
 media-libs/mesa egl gles2 shared-glapi
