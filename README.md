@@ -125,6 +125,7 @@ cd ~/trunk/src/third_party/kernel/v4.4
 ./chromeos/scripts/kernelconfig editconfig
 ./chromeos/scripts/prepareconfig chromiumos-x86_64
 cp .config ~/trunk/src/overlays/overlay-saneyan/kernel.config
+cros_workon stop --board=saneyan sys-kernel/chromeos-kernel-4_4
 ```
 
 If you already execute setup_board, re-execute the command with --force option.
