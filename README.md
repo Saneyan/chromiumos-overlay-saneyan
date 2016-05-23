@@ -1,9 +1,12 @@
 # chromiumos-overlay-saneyan
 
 The Chromium OS overlay for saneyan dev environment.<br>
-This overlay bundles dev packages and enables KVM for Chromium OS.
+
+ * Supports KVM
+ * Bundles dev packages and iwlwifi driver
 
 ![chromiumos](/chromiumos.png)
+
 
 ## Installation
 
@@ -28,26 +31,6 @@ repo start saneyan/master .
 #### Edit eclass and ebuild
 
 Add `saneyan` to $ALL\_BOARDS list in `~/chromiumos/src/third_party/chromiumos-overlay/eclass/cros-board.eclass` so that cros can setup and bulid an image for the board.
-
-Add the following package names to $CROS\_COMMON\_RDEPEND list in `~/chromiumos/src/third_party/chromiumos-overlay/virtual/target-chromium-os/target-chromium-os-1.ebuild` to install additional packages.<br>
-
-```
-app-shells/zsh
-app-shells/zsh-completions
-app-misc/tmux
-dev-vcs/git
-kvm? (
-  app-emulation/qemu
-  net-misc/bridge-utils
-)
-neovim? ( app-editors/neovim )
-```
-
-Do not forget add use flags to IUSE variable.
-
-```
-IUSE="${IUSE} kvm neovim"
-```
 
 **Make sure the revision number of the ebuild has been incremented.**
 
@@ -129,4 +112,23 @@ Open chrome://settings-frame/keyboard-overlay and run this snippet to enable to 
 
 ```js
 document.querySelector('#caps-lock-remapping-section').hidden = false;
+```
+
+## Update kernel.config
+
+When the target kernel version is `4.4`:
+
+```
+cros_workon start --board=saneyan sys-kernel/chromeos-kernel-4_4
+cd ~/trunk/src/third_party/kernel/v4.4
+# Use kernelconfig to customize your kernel configs.
+./chromeos/scripts/kernelconfig editconfig
+./chromeos/scripts/prepareconfig chromiumos-x86_64
+cp .config ~/trunk/src/overlays/overlay-saneyan/kernel.config
+```
+
+If you already execute setup_board, re-execute the command with --force option.
+
+```
+./setup_board --board=saneyan --force
 ```
