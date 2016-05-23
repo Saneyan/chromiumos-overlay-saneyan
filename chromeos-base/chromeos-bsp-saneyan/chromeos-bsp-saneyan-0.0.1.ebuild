@@ -19,10 +19,10 @@ RDEPEND="${DEPEND}
 	neovim? ( app-editors/neovim )
 "
 
-#S=$WORKDIR
+S=$WORKDIR
 
-#src_install() {
-#	dosbin "${FILESDIR}/kvmc"
-#	insinto "/etc/init"
-#	doins "${FILESDIR}"/upstart/*
-#}
+src_install() {
+	dosbin "${FILESDIR}/kvmc"
+	insinto "/etc/init"
+	doins "${FILESDIR}"/upstart/*
+}
