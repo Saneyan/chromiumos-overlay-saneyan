@@ -1,0 +1,21 @@
+#!/bin/bash
+
+CON_NAME=saneyan-chromiumos
+WORKDIR=~/chromiumos
+
+mkdir -pv $WORKDIR
+
+if ! [[ $(docker ps -f name=$CON_NAME -f status=exited -q) == '' ]]; then
+  docker start $CON_NAME
+elif [[ $(docker ps -f name=$CON_NAME -q) == '' ]]; then
+  docker run -it -d --privileged \
+    --name $CON_NAME \
+    -v /dev:/dev \
+    -v /lib/modules:/lib/modules:ro \
+    -v $WORKDIR:/home/user/chromiumos \
+    -e LUID=$(id -u $USER) \
+    -e LGID=$(id -g $USER) \
+    saneyan/chromiumos:latest
+fi
+
+docker exec -it $CON_NAME bash
