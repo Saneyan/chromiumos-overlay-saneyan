@@ -1,4 +1,18 @@
 #sys-libs/ncurses tinfo unicode
 #app-shells/zsh pcre
-app-emulation/qemu qemu_softmmu_targets_x86_64 -usb
+app-emulation/qemu qemu_softmmu_targets_x86_64 -usb -bluetooth
 media-libs/mesa egl gles2 shared-glapi
+# required by app-emulation/qemu-3.0.0::portage-stable[ncurses,static]
+# required by chromeos-base/chromeos-bsp-saneyan-0.0.1-r11::saneyan[kvm]
+# required by virtual/chromeos-bsp-2::saneyan
+# required by virtual/target-chromium-os-1-r109::chromiumos
+# required by virtual/target-os-1-r3::chromiumos
+# required by virtual/target-os (argument)
+>=sys-libs/ncurses-5.9-r7:0 unicode
+# required by app-emulation/qemu-3.0.0::portage-stable[bzip2,static]
+# required by chromeos-base/chromeos-bsp-saneyan-0.0.1-r11::saneyan[kvm]
+# required by virtual/chromeos-bsp-2::saneyan
+# required by virtual/target-chromium-os-1-r109::chromiumos
+# required by virtual/target-os-1-r3::chromiumos
+# required by virtual/target-os (argument)
+>=app-arch/bzip2-1.0.6-r9 static-libs
