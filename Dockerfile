@@ -19,6 +19,7 @@ RUN useradd -G sudo -m -s /bin/bash user && \
     echo user:password | chpasswd
 
 COPY cros_init /sbin/cros_init
+COPY cros_update /sbin/cros_update
 COPY entrypoint.sh /sbin/entrypoint.sh
 
 USER user

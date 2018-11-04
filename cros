@@ -2,20 +2,39 @@
 
 CON_NAME=saneyan-chromiumos
 WORKDIR=~/chromiumos
+REPO=$(cd $(dirname $0) && pwd)
 
-mkdir -pv $WORKDIR
+function start() {
+  mkdir -pv $WORKDIR
 
-if ! [[ $(docker ps -f name=$CON_NAME -f status=exited -q) == '' ]]; then
-  docker start $CON_NAME
-elif [[ $(docker ps -f name=$CON_NAME -q) == '' ]]; then
-  docker run -it -d --privileged \
-    --name $CON_NAME \
-    -v /dev:/dev \
-    -v /lib/modules:/lib/modules:ro \
-    -v $WORKDIR:/home/user/chromiumos \
-    -e LUID=$(id -u $USER) \
-    -e LGID=$(id -g $USER) \
-    saneyan/chromiumos:latest
-fi
+  if ! [[ $(docker ps -f name=$CON_NAME -f status=exited -q) == '' ]]; then
+    docker start $CON_NAME
+  elif [[ $(docker ps -f name=$CON_NAME -q) == '' ]]; then
+    docker run -it -d --privileged \
+      --name $CON_NAME \
+      -v /dev:/dev \
+      -v /lib/modules:/lib/modules:ro \
+      -v $WORKDIR:/home/user/chromiumos \
+      -v $REPO:/home/user/overlays/overlay-saneyan \
+      -e LUID=$(id -u $USER) \
+      -e LGID=$(id -g $USER) \
+      saneyan/chromiumos:latest
+  fi
 
-docker exec -it $CON_NAME bash
+  docker exec -it $CON_NAME bash
+}
+
+function stop() {
+  docker stop $CON_NAME
+}
+
+function delete() {
+  docker rm $CON_NAME
+}
+
+case $1 in
+  start) start ;;
+  stop) stop ;;
+  delete) delete ;;
+  *) echo "start [DOCKER_OPTION] | stop | delete"
+esac

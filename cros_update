@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd ~/chromiumos
+repo sync -j4
+rm ~/overlays
+ln -s ~/overlays/overlay-* ~/chromiumos/src/overlays
