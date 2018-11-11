@@ -1,1 +1,0 @@
-chromeos-bsp-saneyan-0.0.1.ebuild
