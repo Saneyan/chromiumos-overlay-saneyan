@@ -1,1 +1,9 @@
 media-libs/mesa egl gles2 shared-glapi
+app-emulation/qemu -bluetooth
+# required by app-emulation/qemu-3.0.0::portage-stable[ncurses,static]
+# required by qemu (argument)
+>=sys-libs/ncurses-5.9-r7:0 unicode
+# required by app-emulation/qemu-3.0.0::portage-stable[bzip2,static]
+# required by qemu (argument)
+>=app-arch/bzip2-1.0.6-r9 static-libs
+
