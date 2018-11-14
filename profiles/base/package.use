@@ -1,5 +1,5 @@
 media-libs/mesa egl gles2 shared-glapi
-app-emulation/qemu -bluetooth
+app-emulation/qemu -bluetooth virtfs
 # required by app-emulation/qemu-3.0.0::portage-stable[ncurses,static]
 # required by qemu (argument)
 >=sys-libs/ncurses-5.9-r7:0 unicode
