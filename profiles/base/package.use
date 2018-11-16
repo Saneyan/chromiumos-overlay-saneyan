@@ -1,8 +1,24 @@
 media-libs/mesa egl gles2 shared-glapi
 app-emulation/qemu -bluetooth virtfs -static
-# required by app-emulation/qemu-3.0.0::portage-stable[ncurses,static]
-# required by qemu (argument)
->=sys-libs/ncurses-5.9-r7:0 unicode
-# required by app-emulation/qemu-3.0.0::portage-stable[bzip2,static]
-# required by qemu (argument)
->=app-arch/bzip2-1.0.6-r9 static-libs
+# required by app-emulation/qemu-2.6.0-r4::chromiumos[-qemu_softmmu_targets_mips,-qemu_softmmu_targets_alpha,-qemu_softmmu_targets_aarch64,-qemu_softmmu_targets_mips64,-qemu_softmmu_targets_s390x,-qemu_user_targets_sparc64,-qemu_user_targets_mipsn32el,-qemu_user_targets_sparc,-qemu_user_targets_ppc64le,-qemu_user_targets_cris,-qemu_softmmu_targets_xtensaeb,-qemu_user_targets_sh4,-qemu_softmmu_targets_mipsel,qemu_user_targets_x86_64,-qemu_user_targets_i386,-qemu_user_targets_m68k,-qemu_user_targets_armeb,-qemu_softmmu_targets_moxie,-qemu_user_targets_mips,-qemu_user_targets_sparc32plus,-qemu_softmmu_targets_m68k,-qemu_softmmu_targets_microblazeel,-qemu_softmmu_targets_xtensa,-qemu_user_targets_or32,-qemu_softmmu_targets_or32,-qemu_softmmu_targets_ppcemb,-qemu_softmmu_targets_microblaze,qemu_softmmu_targets_arm,-qemu_user_targets_alpha,-qemu_softmmu_targets_sh4eb,-qemu_user_targets_microblaze,-qemu_softmmu_targets_unicore32,-qemu_user_targets_unicore32,-qemu_user_targets_microblazeel,-qemu_softmmu_targets_i386,static-user,-qemu_user_targets_mips64el,-qemu_softmmu_targets_ppc64,qemu_softmmu_targets_sparc,-qemu_softmmu_targets_tricore,-qemu_softmmu_targets_ppc,qemu_softmmu_targets_x86_64,-qemu_user_targets_mipsel,-qemu_user_targets_mipsn32,-qemu_softmmu_targets_mips64el,-qemu_softmmu_targets_cris,-qemu_user_targets_arm,-qemu_user_targets_ppc64,-qemu_user_targets_ppc64abi32,-qemu_softmmu_targets_sparc64,-qemu_user_targets_aarch64,-qemu_softmmu_targets_lm32,-qemu_user_targets_s390x,static-softmmu,-qemu_user_targets_sh4eb,-qemu_user_targets_ppc,-qemu_user_targets_mips64,-qemu_user_targets_tilegx,-qemu_softmmu_targets_sh4]
+# required by chromeos-base/chromeos-bsp-saneyan-0.0.1-r1::saneyan[kvm]
+# required by virtual/chromeos-bsp-2::saneyan
+# required by chromeos-base/chromeos-installshim-0.0.1-r18::chromiumos
+# required by virtual/target-chromium-os-factory-shim-1-r1::chromiumos
+# required by virtual/target-os-factory-shim-1-r1::chromiumos
+# required by virtual/target-os-factory-shim (argument)
+>=dev-libs/glib-2.52.3-r2 static-libs
+# required by app-emulation/qemu-2.6.0-r4::chromiumos[-qemu_softmmu_targets_mips,-qemu_softmmu_targets_alpha,-qemu_softmmu_targets_aarch64,-qemu_softmmu_targets_mips64,-qemu_softmmu_targets_s390x,-qemu_user_targets_sparc64,-qemu_user_targets_mipsn32el,-qemu_user_targets_sparc,-qemu_user_targets_ppc64le,-qemu_user_targets_cris,-qemu_softmmu_targets_xtensaeb,xattr,-qemu_user_targets_sh4,-qemu_softmmu_targets_mipsel,qemu_user_targets_x86_64,-qemu_user_targets_i386,-qemu_user_targets_m68k,-qemu_user_targets_armeb,-qemu_softmmu_targets_moxie,-qemu_user_targets_mips,-qemu_user_targets_sparc32plus,-qemu_softmmu_targets_m68k,-qemu_softmmu_targets_microblazeel,-qemu_softmmu_targets_xtensa,-qemu_user_targets_or32,-qemu_softmmu_targets_or32,-qemu_softmmu_targets_ppcemb,-qemu_softmmu_targets_microblaze,qemu_softmmu_targets_arm,-qemu_user_targets_alpha,-qemu_softmmu_targets_sh4eb,-qemu_user_targets_microblaze,-qemu_softmmu_targets_unicore32,-qemu_user_targets_unicore32,-qemu_user_targets_microblazeel,-qemu_softmmu_targets_i386,static-user,-qemu_user_targets_mips64el,-qemu_softmmu_targets_ppc64,qemu_softmmu_targets_sparc,-qemu_softmmu_targets_tricore,-qemu_softmmu_targets_ppc,qemu_softmmu_targets_x86_64,-qemu_user_targets_mipsel,-qemu_user_targets_mipsn32,-qemu_softmmu_targets_mips64el,-qemu_softmmu_targets_cris,-qemu_user_targets_arm,-qemu_user_targets_ppc64,-qemu_user_targets_ppc64abi32,-qemu_softmmu_targets_sparc64,-qemu_user_targets_aarch64,-qemu_softmmu_targets_lm32,-qemu_user_targets_s390x,static-softmmu,-qemu_user_targets_sh4eb,-qemu_user_targets_ppc,-qemu_user_targets_mips64,-qemu_user_targets_tilegx,-qemu_softmmu_targets_sh4]
+# required by chromeos-base/chromeos-bsp-saneyan-0.0.1-r1::saneyan[kvm]
+# required by virtual/chromeos-bsp-2::saneyan
+# required by chromeos-base/chromeos-installshim-0.0.1-r18::chromiumos
+# required by virtual/target-chromium-os-factory-shim-1-r1::chromiumos
+# required by virtual/target-os-factory-shim-1-r1::chromiumos
+# required by virtual/target-os-factory-shim (argument)
+>=sys-apps/attr-2.4.47-r2 static-libs
+# required by dev-libs/glib-2.52.3-r2::chromiumos
+# required by chromeos-base/quipper-0.0.1-r2436::chromiumos
+# required by virtual/target-chromium-os-dev-1-r35::chromiumos[profile]
+# required by virtual/target-os-dev-1-r3::chromiumos
+# required by virtual/target-os-dev (argument)
+>=dev-libs/libpcre-8.41-r1 static-libs
