@@ -6,80 +6,62 @@ The Chromium OS overlay for saneyan dev environment.<br>
 
  * KVM support
  * Iwlwifi support
- * QEMU with KVM, virtfs and spice support
+ * QEMU with KVM, VirtFS and Spice support
+ * Plan 9 resource sharing Support
 
 ## Installation
+```
+(outside) mkdir -p ~/chromiumos
+(outside) repo init -u https://chromium.googlesource.com/chromiumos/manifest.git --repo-url https://chromium.googlesource.com/external/repo.git -b release-R71-11151.B
+(outside) repo sync -j8
+```
 
-**Before installing this overlay, you must prepare to build Chromium OS and get the source code.**
-
-Place the overlay into `~/chromiumos/src/overlays`. Then, the dir name must be `overlay-saneyan`.
+Place the overlay into `~/chromiumos/src/overlays`. Make sure the directory name of overlay is `overlay-saneyan`.
 
 ```
-git clone https://github.com/Saneyan/chromiumos-overlay-saneyan.git overlay-saneyan
+(outside) git clone https://github.com/Saneyan/chromiumos-overlay-saneyan.git overlay-saneyan
 mv overlay-saneyan ~/chromiumos/src/overlays
-```
-
-Create and check out a new branch in each of portage-stable and chromiumos-overlay repository.
-
-```
-cd ~/chromiumos/src/third_party/portage-stable
-repo start saneyan/master .
-cd ../chromiumos-overlay
-repo start saneyan/master .
 ```
 
 #### Edit eclass and ebuild
 
-Add `saneyan` to $ALL\_BOARDS list in `~/chromiumos/src/third_party/chromiumos-overlay/eclass/cros-board.eclass` so that cros can setup and bulid an image for the board.
-
-**Make sure the revision number of the ebuild has been incremented.**
+Add `saneyan` to $ALL\_BOARDS list in `~/chromiumos/src/third_party/chromiumos-overlay/eclass/cros-board.eclass` so cros can setup and bulid an image for this board.
 
 #### Licensing
 
-The `app-shells/zsh-completions` uses BSD license but not BSD-Google. So you must copy the copyright attribution to `~/chromiumos/src/third_party/chromiumos-overlay/licences/copyright-attribution` from the overlay.
-
-```
-cp -r ../../overlays/overlay-saneyan/licenses/copyright-attribution/app-shells ./licenses/copyright-attribution
-```
-
-#### Fix crosutils (udev)
-
-You should fix mtools to avoid mcopy's flock failure for build\_image.
-
-```
-repo download --cherry-pick chromiumos/platform/crosutils 303962/1
-```
+`sys-firmware/edk2-ovmf` uses BSD license but not BSD-Google. So you must copy the copyright attribution to `~/chromiumos/src/third_party/chromiumos-overlay/licences/copyright-attribution` from the overlay.
 
 #### USE flag
 
  * `kvm`: Enable KVM and install qemu package (containing qemu-system-x86\_64 command, disabling USB passthrough).
- * `neovim`: Install Neovim that's a refactor in the tradition of Vim (accepting ~amd64 keyword). Do not forget Portage must support EAPI 6, or the LPeg which Neovim depends is never installed.
 
 ## Build
 
-Enter chroot with cros\_sdk.
+1. Enter chroot with cros\_sdk.
 
 ```
-cros_sdk
+(outside) cros_sdk
 ```
 
-This command needs to run once.
+2. This command needs to run once.
 
 ```
-./setup_board --board=saneyan
+(inside) ./setup_board --board=saneyan
 ```
 
-You need to build packages before building an image.
+3. Copy `package.env` and the environment config file to `/build/saneyan/etc/portage`.
+
+4. You need to build packages before building an image.
 
 ```
-./build_packages --board=saneyan
+(inside) ./build_packages --board=saneyan
 ```
 
-After that, let's build an image and copy onto a USB drive.
+5. Let's build an image and copy onto a USB drive.
 
 ```
-./build_image --board=saneyan --noenable_rootfs_verification --boot_args="noinitrd lsm.module_locking=0 disablevmx=off" dev
-cros flash usb:///dev/sdx saneyan/latest
+(inside) ./build_image --board=saneyan --noenable_rootfs_verification --boot_args="noinitrd lsm.module_locking=0 disablevmx=off" dev
+(inside) cros flash usb:///dev/sdx saneyan/latest
 ```
 
 ## Setup
@@ -87,24 +69,60 @@ cros flash usb:///dev/sdx saneyan/latest
 After staring up, add the kvm\_intel module to Linux kernel and check installation with lsmod.
 
 ```
-sudo modprobe kvm_intel
-lsmod | grep kvm_intel # You will see it.
+(device) sudo modprobe kvm_intel
+(device) lsmod | grep kvm_intel # You will see it.
 ```
 
-#### Prepare Virtual Machine (Alpine)
+#### Virtual Machine (for Alpine Linux)
+
+##### Preparation
 
 Download Alpine Linux ISO and setup disk image and virtual machine. Note that Alpine Linux should be built with vanilla kernel so that Docker can store new images.
 
+1. Create QEMU image formatted in qcow2
 ```
-sudo mkdir -p /usr/local/q/alpine
-sudo chown chronos:chronos /usr/local/q/alpine
-cd /usr/local/q/alpine
-wget http://wiki.alpinelinux.org/cgi-bin/dl.cgi/v3.3/releases/x86_64/alpine-vanilla-3.3.3-x86_64.iso
-qemu-img create -f qcow2 alpine.img 20G
-qemu-system-x86_64 -daemonize -enable-kvm -m 2048M -drive index=0,media=disk,if=virtio,file=alpine.img -netdev type=user,id=alpnet -device virtio-net-pci,netdev=alpnet -m 2048M -localtime
+(device) qemu-img create -f qcow2 alpine.img 20G
 ```
 
-You can connect to the virtual machine with VNC Viewer for Google Chrome or SSH.
+2. Start virtual machine with ISO file to install Alpine Linux.
+```
+(device) qemu-system-x86_64 -daemonize -enable-kvm -m 2048M -drive index=0,media=disk,if=virtio,file=alpine.img -netdev type=user,id=alpnet -device virtio-net-pci,netdev=alpnet -localtime -cdrom alpine.iso
+```
+
+3. Install Alpine Linux and restart virtual machine to boot from the image file.
+```
+(vm) setup-alpine
+(vm) poweroff -f
+(device) qemu-system-x86_64 -daemonize -enable-kvm -m 2048M -drive index=0,media=disk,if=virtio,file=alpine.img -netdev type=user,id=alpnet,hostfwd=tcp::22-:22 -device virtio-net-pci,netdev=alpnet -localtime
+```
+You can connect to this virtual machine with VNC Viewer for Google Chrome or SSH.
+
+##### Optional
+
+This overlay enables QEMU to use VirtFS. It means you can share files between host and guest using 9p virtio as the transport. 
+
+4. Create a directory in home.
+```
+(device) mkdir ~/hostshare
+```
+
+5. Start virtual machine with additional options.
+```
+(device) qemu-system-x86_64 -daemonize -enable-kvm -m 2048M -drive index=0,media=disk,if=virtio,file=alpine.img -netdev type=user,id=alpnet,hostfwd=tcp::22-:22 -device virtio-net-pci,netdev=alpnet -localtime -fsdev local,security_model=passthrough,id=fsdev0,path=/home/chronos/user/hostshare -device virtio-9p-pci,id=fs0,fsdev=fsdev0,mount_tag=hostshare
+```
+
+6. Create a user which UID and GID are same as host's IDs.
+```
+(vm) adduser saneyan
+```
+
+7. Mount the 9p filesystem from the host using 9p virtio.
+```
+(vm) mkdir /home/saneyan/hostshare
+(vm) mount -t 9p -o trans=virtio,version=9p2000.L,rw hostshare /home/saneyan/hostshare
+```
+
+Now you can write or read files from either host or guest.
 
 #### Remapping Keys
 
@@ -116,20 +134,20 @@ document.querySelector('#caps-lock-remapping-section').hidden = false;
 
 ## Update kernel.config
 
-When the target kernel version is `4.4`:
+When the target kernel version is `4.14`:
 
 ```
-cros_workon start --board=saneyan sys-kernel/chromeos-kernel-4_4
-cd ~/trunk/src/third_party/kernel/v4.4
+(inside) cros_workon --board=saneyan start sys-kernel/chromeos-kernel-4_14
+(inside) cd ~/trunk/src/third_party/kernel/v4.14
 # Use kernelconfig to customize your kernel configs.
-./chromeos/scripts/kernelconfig editconfig
-./chromeos/scripts/prepareconfig chromiumos-x86_64
-cp .config ~/trunk/src/overlays/overlay-saneyan/kernel.config
-cros_workon stop --board=saneyan sys-kernel/chromeos-kernel-4_4
+(inside) ./chromeos/scripts/kernelconfig editconfig
+(inside) ./chromeos/scripts/prepareconfig chromiumos-x86_64
+(inside) cp .config ~/trunk/src/overlays/overlay-saneyan/kernel.config
+(inside) cros_workon --board=saneyan stop sys-kernel/chromeos-kernel-4_14
 ```
 
 If you already execute setup_board, re-execute the command with --force option.
 
 ```
-./setup_board --board=saneyan --force
+(inside) ./setup_board --board=saneyan --force
 ```
