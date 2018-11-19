@@ -1,12 +1,12 @@
 # chromiumos-overlay-saneyan
 
+**This build is based on Chromium OS release-R71-11151.B**
+
 The Chromium OS overlay for saneyan dev environment.<br>
 
- * Supports KVM
- * Bundles dev packages and iwlwifi driver
-
-![chromiumos](/chromiumos.png)
-
+ * KVM support
+ * Iwlwifi support
+ * QEMU with KVM, virtfs and spice support
 
 ## Installation
 
