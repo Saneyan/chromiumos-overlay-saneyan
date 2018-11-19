@@ -10,8 +10,11 @@ The Chromium OS overlay for saneyan dev environment.<br>
  * Plan 9 resource sharing Support
 
 ## Installation
-
-**Before installing this overlay, you must prepare to build Chromium OS and get the source code.**
+```
+(outside) mkdir -p ~/chromiumos
+(outside) repo init -u https://chromium.googlesource.com/chromiumos/manifest.git --repo-url https://chromium.googlesource.com/external/repo.git -b release-R71-11151.B
+(outside) repo sync -j8
+```
 
 Place the overlay into `~/chromiumos/src/overlays`. Make sure the directory name of overlay is `overlay-saneyan`.
 
