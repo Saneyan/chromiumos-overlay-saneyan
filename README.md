@@ -124,14 +124,6 @@ This overlay enables QEMU to use VirtFS. It means you can share files between ho
 
 Now you can write or read files from either host or guest.
 
-#### Remapping Keys
-
-Open chrome://settings-frame/keyboard-overlay and run this snippet to enable to remap CapsLock key to another key.
-
-```js
-document.querySelector('#caps-lock-remapping-section').hidden = false;
-```
-
 ## Update kernel.config
 
 When the target kernel version is `4.14`:
