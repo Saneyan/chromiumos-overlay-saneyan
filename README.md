@@ -7,6 +7,7 @@ The Chromium OS overlay for saneyan dev environment.<br>
  * KVM support
  * Iwlwifi support
  * QEMU with KVM, VirtFS and Spice support
+ * Plan 9 resource sharing Support
 
 ## Installation
 
