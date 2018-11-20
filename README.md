@@ -8,6 +8,11 @@ The Chromium OS overlay for saneyan dev environment.<br>
  * Iwlwifi support
  * QEMU with KVM, VirtFS and Spice support
  * Plan 9 resource sharing Support
+ 
+## Tested devices
+
+ * Thinkpad T480
+ * Thinkpad X230
 
 ## Installation
 ```
