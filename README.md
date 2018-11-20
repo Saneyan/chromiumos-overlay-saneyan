@@ -14,6 +14,11 @@ The Chromium OS overlay for saneyan dev environment.<br>
  * Thinkpad T480
  * Thinkpad X230
 
+## Channels
+
+ * [Release (R71)](https://github.com/Saneyan/chromiumos-overlay-saneyan/releases/tag/r71)
+ * [Dev (R72)](https://github.com/Saneyan/chromiumos-overlay-saneyan/tree/r72)
+
 ## Installation
 ```
 (outside) mkdir -p ~/chromiumos
