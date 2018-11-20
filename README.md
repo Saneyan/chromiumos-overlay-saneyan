@@ -71,16 +71,69 @@ Add `saneyan` to $ALL\_BOARDS list in `~/chromiumos/src/third_party/chromiumos-o
 
 ## Setup
 
-After staring up, add the kvm\_intel module to Linux kernel and check installation with lsmod.
+#### API Keys
+
+```
+(device) sudo mount -o remount,rw /
+```
+
+```
+# /etc/chrome_dev.conf
+GOOGLE_API_KEY=your_api_key
+GOOGLE_DEFAULT_CLIENT_ID=your_client_id
+GOOGLE_DEFAULT_CLIENT_SECRET=your_client_secret
+```
+
+Reboot your system to apply API keys.
+
+#### Add IME Engine to Crostini
+
+```
+(penguin) sudo apt install fcitx fcitx-mozc
+```
+
+```
+# /etc/systemd/user/cros-garcon.service.d/cros-garcon-override.conf
+Environment="XMODIFIERS=@im=fcitx"
+Environment="GTK_IM_MODULE=fcitx"
+Environment="QT_IM_MODULE=fcitx"
+```
+
+```
+(penguin) fcitx-autostart
+```
+
+#### Virtual Machine with LXC
+
+##### Preparation (for Debian)
+
+```
+(crosh) vmc start termina
+```
+
+```
+(termina) lxc launch images:debian/9 my-container
+```
+
+```
+(termina) lxc storage volume create default shared-volume
+```
+
+```
+(termina) lxc storage volume attach default shared-volume my-container data /data
+(termina) lxc storage volume attach default shared-volume penguin data /data
+```
+
+#### Virtual Machine with QEMU
+
+Add the kvm\_intel module to Linux kernel and check installation with lsmod.
 
 ```
 (device) sudo modprobe kvm_intel
 (device) lsmod | grep kvm_intel # You will see it.
 ```
 
-#### Virtual Machine (for Alpine Linux)
-
-##### Preparation
+##### Preparation (for Alpine)
 
 Download Alpine Linux ISO and setup disk image and virtual machine. Note that Alpine Linux should be built with vanilla kernel so that Docker can store new images.
 
@@ -148,3 +201,9 @@ If you already execute setup_board, re-execute the command with --force option.
 ```
 (inside) ./setup_board --board=saneyan --force
 ```
+
+## References
+ * [API Keys - The Chromium Projects](https://www.chromium.org/developers/how-tos/api-keys)
+ * [9p virtio - KVM](https://www.linux-kvm.org/page/9p_virtio)
+ * [Storage management in LXD 2.15](https://blog.ubuntu.com/2017/07/12/storage-management-in-lxd-2-15)
+ * [Quick note on Crostini + Chinese IME](https://itsze.ro/blog/2018/08/08/quick-note-on-crostini-chinese-ime.html)
