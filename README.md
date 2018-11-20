@@ -16,8 +16,8 @@ The Chromium OS overlay for saneyan dev environment.<br>
 
 ## Channels
 
- * [Release (R71)](https://github.com/Saneyan/chromiumos-overlay-saneyan/releases/tag/r71) - Based on tag release-R71-11151.B in.
- * [Edge (R72)](https://github.com/Saneyan/chromiumos-overlay-saneyan/tree/r72) - Based on master branch. Unstable.
+ * [Release channel (R71)](https://github.com/Saneyan/chromiumos-overlay-saneyan/releases/tag/r71) - Based on tag release-R71-11151.B.
+ * [Edge channel (R72)](https://github.com/Saneyan/chromiumos-overlay-saneyan/tree/r72) - Based on master branch. Unstable.
 
 ## Installation
 ```
