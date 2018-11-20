@@ -103,7 +103,7 @@ Environment="QT_IM_MODULE=fcitx"
 (penguin) fcitx-autostart
 ```
 
-#### Virtual Machine with LXC
+#### LXC inside Crostini
 
 ##### Preparation (for Debian)
 
