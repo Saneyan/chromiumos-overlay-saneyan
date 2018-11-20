@@ -103,6 +103,14 @@ Environment="QT_IM_MODULE=fcitx"
 (penguin) fcitx-autostart
 ```
 
+#### Install Japanese Font
+
+Japanese characters could be text garbling on Linux Apps. Installing Japanese font like IPA font solves this issue.
+
+```
+(penguin) sudo apt insntall fonts-ipafont
+```
+
 #### LXC inside Crostini
 
 ##### Preparation (for Debian)
