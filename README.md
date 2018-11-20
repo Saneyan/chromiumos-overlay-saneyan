@@ -7,7 +7,7 @@ The Chromium OS overlay for saneyan dev environment.<br>
  * KVM support
  * Iwlwifi support
  * QEMU with KVM, VirtFS and Spice support
- * Plan 9 resource sharing Support
+ * Plan 9 resource sharing support
  
 ## Tested devices
 
@@ -108,7 +108,7 @@ Environment="QT_IM_MODULE=fcitx"
 Japanese characters could be text garbling on Linux Apps. Installing Japanese font like IPA font solves this issue.
 
 ```
-(penguin) sudo apt insntall fonts-ipafont
+(penguin) sudo apt install fonts-ipafont
 ```
 
 #### LXC inside Crostini
