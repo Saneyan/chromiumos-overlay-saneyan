@@ -64,7 +64,7 @@ cmd_kvmc() {
 
       sudo qemu-system-x86_64 -daemonize -enable-kvm \
         -m 4096M \
-        -drive index=0,media=disk,if=virtio,file=$IMAGE_PATH \
+        -drive index=0,media=disk,if=virtio,file=$storage \
         -netdev type=user,id=alpnet,hostfwd=tcp::2022-:22 \
         -device virtio-net-pci,netdev=alpnet \
         -fsdev local,security_model=passthrough,id=fsdev0,path=$SHARED_PATH/$vm_name \
