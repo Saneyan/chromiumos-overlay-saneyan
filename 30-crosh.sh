@@ -85,7 +85,19 @@ cmd_kvmc() {
  
       echo "Started!"
 
+      concierge_client --start_termina_vm --name=termina \
+        --cryptohome_id="${CROS_USER_ID_HASH}" 
+
+      if [ $? -ne 0 ]; then
+        echo "Cannot start termina vm. Skipped sharing folder."
+        return 1
+      fi
+
       cmd_vmc share termina kvmc/$vm_name
+
+      echo "Waiting for termina mounting shared folder..."
+      sleep 3
+
       vsh --owner_id=$CROS_USER_ID_HASH --vm_name=termina -- \
         LXD_DIR=/mnt/stateful/lxd \
         LXD_CONF=/mnt/stateful/lxd_conf \
@@ -166,6 +178,23 @@ cmd_kvmc() {
       ssh -p 2022 -o NoneSwitch=yes ${username}@127.0.0.1
       ;;
 
+    "share")
+      if [ $# -ne 1 ]; then
+        echo "Missing vm name."
+        return 1
+      fi
+
+      local vm_name=$1; shift
+
+      cmd_vmc share termina kvmc/$vm_name
+
+      vsh --owner_id=$CROS_USER_ID_HASH --vm_name=termina -- \
+        LXD_DIR=/mnt/stateful/lxd \
+        LXD_CONF=/mnt/stateful/lxd_conf \
+        lxc config device add penguin ${vm_name}-shared disk source="/mnt/shared/Downloads/kvmc/$vm_name" path="/mnt/shared"
+      ;;
+
     *) echo "kvmc <command> <vm_name>" ;;
+
   esac
 }
