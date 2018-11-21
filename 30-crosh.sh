@@ -28,6 +28,8 @@ cmd_kvmc() {
 
       sudo qemu-system-x86_64 -daemonize -enable-kvm \
         -m 4096M \
+        -smp $(nproc) \
+        -cpu host \
         -netdev type=user,id=alpnet,hostfwd=tcp::2022-:22 \
         -drive index=0,media=disk,if=virtio,file=$storage \
         -device virtio-net-pci,netdev=alpnet \
@@ -69,6 +71,8 @@ cmd_kvmc() {
 
       sudo qemu-system-x86_64 -daemonize -enable-kvm \
         -m 4096M \
+        -smp $(nproc) \
+        -cpu host \
         -drive index=0,media=disk,if=virtio,file=$storage \
         -netdev type=user,id=alpnet,hostfwd=tcp::2022-:22,hostfwd=tcp::2000-:2000,hostfwd=tcp::7000-:7000,hostfwd=tcp::9000-:9000 \
         -device virtio-net-pci,netdev=alpnet \
