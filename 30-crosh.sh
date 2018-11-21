@@ -35,6 +35,11 @@ cmd_kvmc() {
         -pidfile $working/$vm_name.pid \
         -cdrom $IMAGE_PATH
 
+      if [ $? -ne 0 ]; then
+        echo "Cannot start virtual machine."
+        return 1
+      fi
+
       echo "Done!"
       ;;
 
@@ -65,12 +70,18 @@ cmd_kvmc() {
       sudo qemu-system-x86_64 -daemonize -enable-kvm \
         -m 4096M \
         -drive index=0,media=disk,if=virtio,file=$storage \
-        -netdev type=user,id=alpnet,hostfwd=tcp::2022-:22 \
+        -netdev type=user,id=alpnet,hostfwd=tcp::2022-:22,hostfwd=tcp::2000-:2000,hostfwd=tcp::7000-:7000,hostfwd=tcp::9000-:9000 \
         -device virtio-net-pci,netdev=alpnet \
         -fsdev local,security_model=passthrough,id=fsdev0,path=$SHARED_PATH/$vm_name \
         -device virtio-9p-pci,id=fs0,fsdev=fsdev0,mount_tag=shared_dev \
         -rtc base=localtime \
         -pidfile $working/$vm_name.pid \
+
+      if [ $? -ne 0 ]; then
+        echo "Cannot start virtual machine."
+        sudo rm $working/$vm_name.pid
+        return 1
+      fi
  
       echo "Started!"
 
