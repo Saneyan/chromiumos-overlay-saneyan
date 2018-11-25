@@ -4,7 +4,6 @@
 
 The Chromium OS overlay for saneyan dev environment.<br>
 
- * KVM support
  * Iwlwifi support
  * QEMU with KVM, VirtFS and Spice support
  * Plan 9 resource sharing support
@@ -116,7 +115,56 @@ Japanese characters could be text garbling on Linux Apps. Installing Japanese fo
 (penguin) sudo apt install fonts-ipafont
 ```
 
-#### LXC inside Crostini
+#### Docker on Crostini (optional)
+
+```
+(penguin) sudo apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+```
+
+```
+(penguin) curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+(penguin) sudo apt-key fingerprint 0EBFCD88
+(penguin) sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+```
+
+```
+(penguin) sudo apt update && sudo apt install docker-ce
+```
+
+Although Docker would not run with runc, gVisor (runsc) makes Docker run correctly instead.
+
+```
+(penguin) wget https://storage.googleapis.com/gvisor/releases/nightly/latest/runsc
+(penguin) wget https://storage.googleapis.com/gvisor/releases/nightly/latest/runsc.sha512
+(penguin) sha512sum -c runsc.sha512
+(penguin) chmod a+x runsc
+(penguin) sudo mv runsc /usr/local/bin
+```
+
+```
+# /etc/docker/daemon.json
+{
+    "runtimes": {
+        "runsc": {
+            "path": "/usr/local/bin/runsc"
+        }
+    }
+}
+```
+
+Comment out `ExecStartPre` to avoid to load overlay kernel module.
+
+```
+# /lib/systemd/system/container
+#ExecStartPre=/sbin/modprobe overlay
+```
+
+```
+(penguin) sudo systemctl daemon-reload
+(penguin) sudo systemctl restart docker
+```
+
+#### LXC inside Crostini (optional)
 
 ##### Preparation (for Debian)
 
@@ -137,7 +185,7 @@ Japanese characters could be text garbling on Linux Apps. Installing Japanese fo
 (termina) lxc storage volume attach default shared-volume penguin data /data
 ```
 
-#### Virtual Machine with QEMU
+#### Virtual Machine with QEMU (optional)
 
 Add the kvm\_intel module to Linux kernel and check installation with lsmod.
 
