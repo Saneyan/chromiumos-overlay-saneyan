@@ -5,12 +5,13 @@ KVMC_PATH=/home/chronos/user/kvmc
 IMAGE_URL="https://gensho.ftp.acc.umu.se/debian-cd/current/amd64/iso-cd/debian-9.6.0-amd64-netinst.iso"
 IMAGE_PATH=/home/chronos/user/kvmc/debian.img
 SHARED_PATH=/home/chronos/user/Downloads/kvmc
+WAN_IFNAME=wlan0
 
-typeset -A NETWORK
-NETWORK=(
-  [dev]='192.168.0.130/24'
-  [saneyan]='192.168.0.10/24'
-)
+# NETWORK_<vm_name>='<address>/<mask>'
+NETWORK_dev='192.168.10.130/24'
+GUEST_NETWORK_dev='192.168.10.131/24'
+NETWORK_saneyan='192.168.0.10/24'
+GUEST_NETWORK_saneyan='192.168.0.11/24'
 
 #
 # Utilities
@@ -18,21 +19,27 @@ NETWORK=(
 # ifup <tap_name> <address>/<mask>
 ifup() {
   local ifname=$1
-  local addr=$2
-  sudo ip tuntap add $ifname mode tap user `whoami` || return 1
-  sudo ip link set $ifname up || return 1
-  sleep 0.5
-  sudo ip addr add $addr dev $ifname || return 1
-  sudo iptables -A FORWARD -i $ifname -o wlan0 -j ACCEPT
+  local network=$2
+  sudo ip tuntap add $ifname mode tap user `whoami`
+  sudo ip link set $ifname up
+  sudo iptables -A FORWARD -i $ifname -o $WAN_IFNAME -j ACCEPT
+  echo "TAP up: addr=$network, name=$ifname"
+}
+
+# ifassign <tap_name> <address>/<mask>
+ifassign() {
+  sudo ip addr add $2 dev $1
 }
 
 # ifdown <tap_name> <address>/<mask>
 ifdown() {
   local ifname=$1
-  local addr=$2
-  sudo ip addr del $addr dev $ifname || return 1
-  sleep 0.5
-  sudo ip tuntap del $ifname mode tap || return 1
+  local network=$2
+  sudo iptables -D FORWARD -i $ifname -o $WAN_IFNAME -j ACCEPT
+  sudo ip addr del $network dev $ifname
+  sudo ip link set $ifname down
+  sudo ip tuntap del $ifname mode tap
+  echo "TAP down: addr=$network, name=$ifname"
 }
 
 # q_start <vm_name> [options]
@@ -54,7 +61,7 @@ q_start() {
               -pidfile $working/$vm_name.pid \
               -drive index=0,media=disk,if=virtio,file=$working/storage.qcow2"
 
-  while getopts "c:n:f:p" opt; do
+  while getopts "c:n:fp" opt; do
     case $opt in
       f) args="$args \
                -fsdev local,security_model=passthrough,id=fsdev0,path=$SHARED_PATH/$vm_name \
@@ -128,9 +135,10 @@ vm_init() {
   fi
 
   local ifname="tap-$vm_name"
-  local addr=NETWORK[$vm_name]
+  local n=NETWORK_$vm_name
+  local network=${!n}
 
-  ifup $ifname $addr || (echo 'Cannot up network interface.'; return 1)
+  ifup $ifname $network || (echo 'Cannot up network interface.'; return 1)
 
   echo "Starting virtual machine..."
 
@@ -138,9 +146,14 @@ vm_init() {
 
   if [ $? -ne 0 ]; then
     echo "Cannot start virtual machine."
-    ifdown $ifname $addr || (echo "Cannot down network inteface."; return 1)
+    ifdown $ifname $network || (echo "Cannot down network inteface."; return 1)
     return 1
   fi
+
+  echo "Waiting for virtual machine starting to assign IP..."
+  sleep 10
+
+  ifassign $ifname $network
  
   echo "Started!"
 }
@@ -161,9 +174,10 @@ vm_start() {
   fi
 
   local ifname="tap-$vm_name"
-  local addr=NETWORK[$vm_name]
+  local n=NETWORK_$vm_name
+  local network=${!n}
 
-  ifup $ifname $addr || (echo 'Cannot up network interface.'; return 1)
+  ifup $ifname $network || (echo 'Cannot up network interface.'; return 1)
 
   echo "Starting virtual machine..."
 
@@ -171,11 +185,9 @@ vm_start() {
 
   if [ $? -ne 0 ]; then
     echo "Cannot start virtual machine."
-    ifdown $ifname $addr || (echo "Cannot down network inteface."; return 1)
+    ifdown $ifname $network || (echo "Cannot down network inteface."; return 1)
     return 1
   fi
- 
-  echo "Started!"
 
   concierge_client --start_termina_vm \
     --name=termina \
@@ -186,7 +198,14 @@ vm_start() {
     return 1
   fi
 
-  share $vm_name
+  vm_share $vm_name
+
+  echo "Waiting for virtual machine starting to assign IP..."
+  sleep 10
+
+  ifassign $ifname $network
+
+  echo "Started!"
 }
 
 # vm_stop <vm_name>
@@ -209,8 +228,10 @@ vm_stop() {
   sudo rm $working/$vm_name.pid
 
   local ifname="tap-$vm_name"
+  local n=NETWORK_$vm_name
+  local network=${!n}
 
-  ifdown $ifname || (echo "Cannot down network inteface."; return 1)
+  ifdown $ifname $network || (echo "Cannot down network inteface."; return 1)
 
   echo "Stopped!"
 }
@@ -251,8 +272,11 @@ vm_exec() {
   fi
 
   local username=$1; shift
+  local n=GUEST_NETWORK_$vm_name
+  local parts=($(echo ${!n} | sed -e 's,/, ,'))
+  local addr=${parts[0]}
       
-  ssh -o NoneSwitch=yes ${username}@${NETWORK[$vm_name]}
+  ssh -o NoneSwitch=yes ${username}@${addr}
 }
 
 # vm_share <vm_name>
@@ -269,7 +293,6 @@ vm_share() {
     lxc config device add penguin ${vm_name}-shared disk source="/mnt/shared/Downloads/kvmc/$vm_name" path="/mnt/shared"
 }
 
-
 cmd_kvmc() {
   local cmd=$1; shift
 
@@ -279,7 +302,6 @@ cmd_kvmc() {
         echo "Missing vm name."
         return 1
       fi
-
       vm_init $1
       ;;
 
@@ -288,7 +310,6 @@ cmd_kvmc() {
         echo "Missing vm name."
         return 1
       fi
-
       vm_start $1
       ;;
 
@@ -297,7 +318,6 @@ cmd_kvmc() {
         echo "Missing vm name."
         return 1
       fi
-
       vm_stop $1
       ;;
 
@@ -306,7 +326,6 @@ cmd_kvmc() {
         echo "Missing vm name."
         return 1
       fi
-
       vm_destroy $1
       ;;
 
@@ -315,7 +334,6 @@ cmd_kvmc() {
         echo "Missing vm name or username."
         return 1
       fi
-
       vm_exec $1 $2
       ;;
 
@@ -324,7 +342,6 @@ cmd_kvmc() {
         echo "Missing vm name."
         return 1
       fi
-
       vm_share $1
       ;;
 
