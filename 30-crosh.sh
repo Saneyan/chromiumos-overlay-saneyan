@@ -23,6 +23,7 @@ ifup() {
   sudo ip tuntap add $ifname mode tap user `whoami`
   sudo ip link set $ifname up
   sudo iptables -A FORWARD -i $ifname -o $WAN_IFNAME -j ACCEPT
+  sudo iptables -t nat -A POSTROUTING -o $WAN_IFNAME -j MASQUERADE
   echo "TAP up: addr=$network, name=$ifname"
 }
 
