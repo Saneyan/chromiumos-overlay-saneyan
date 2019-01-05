@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd ~/chromiumos
-repo sync -j4
+repo sync -j$(nproc)
